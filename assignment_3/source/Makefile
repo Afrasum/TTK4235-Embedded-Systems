@@ -12,7 +12,7 @@ OBJ = main.o saus.o lefse.o krydder.o protein.o grønnsaker.o drikke.o
 taco: $(OBJ)
 	$(CC) $(CFLAGS) -o $@ $^
 
-main.o: main.
+main.o: main.c
 	$(CC) $(CFLAGS) -c main.c -o main.o
 
 saus.o: taco_saus.c
