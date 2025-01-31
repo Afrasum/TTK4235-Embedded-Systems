@@ -1,0 +1,72 @@
+\doxysection{source/system.h File Reference}
+\hypertarget{system_8h}{}\label{system_8h}\index{source/system.h@{source/system.h}}
+
+
+Definerer systemobjeter of funksjoner for å representere og håndtere systemer.  
+
+
+\doxysubsubsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{struct_system}{System}}
+\begin{DoxyCompactList}\small\item\em A structure to represent a system and desired PID tuning method. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{system_8h_aed7f5186d416224e26c97bc9978aac47}\label{system_8h_aed7f5186d416224e26c97bc9978aac47} 
+enum {\bfseries Tuning} \{ {\bfseries Classic\+\_\+\+Ziegler\+\_\+\+Nichols}
+, {\bfseries Pessen\+\_\+\+Integral\+\_\+\+Rule}
+ \}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{struct_system}{System}} \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{system_8h_a9498fc506100b388a8cca347628c2ade}{system\+\_\+create}} (double Ku, double Tu, Tuning tuning\+\_\+method)
+\begin{DoxyCompactList}\small\item\em Oppretter nytt systemobjekt. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{system_8h_adab9a110141ccce185af981adbc62515}{system\+\_\+delete}} (\mbox{\hyperlink{struct_system}{System}} \texorpdfstring{$\ast$}{*}system\+\_\+current)
+\begin{DoxyCompactList}\small\item\em Sletter systemobjektet. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Definerer systemobjeter of funksjoner for å representere og håndtere systemer. 
+
+
+
+\doxysubsection{Function Documentation}
+\Hypertarget{system_8h_a9498fc506100b388a8cca347628c2ade}\index{system.h@{system.h}!system\_create@{system\_create}}
+\index{system\_create@{system\_create}!system.h@{system.h}}
+\doxysubsubsection{\texorpdfstring{system\_create()}{system\_create()}}
+{\footnotesize\ttfamily \label{system_8h_a9498fc506100b388a8cca347628c2ade} 
+\mbox{\hyperlink{struct_system}{System}} \texorpdfstring{$\ast$}{*} system\+\_\+create (\begin{DoxyParamCaption}\item[{double}]{Ku}{, }\item[{double}]{Tu}{, }\item[{Tuning}]{tuning\+\_\+method}{}\end{DoxyParamCaption})}
+
+
+
+Oppretter nytt systemobjekt. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em Ku} & Gain margin for loop stability \\
+\hline
+\mbox{\texttt{ in}}  & {\em Tu} & Period of the oscillations frequency at the stability limit \\
+\hline
+\mbox{\texttt{ in}}  & {\em tuning\+\_\+method} & Ønsket PID tuning metode \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+En peker til det nyopprettede systemobjektet 
+\end{DoxyReturn}
+\Hypertarget{system_8h_adab9a110141ccce185af981adbc62515}\index{system.h@{system.h}!system\_delete@{system\_delete}}
+\index{system\_delete@{system\_delete}!system.h@{system.h}}
+\doxysubsubsection{\texorpdfstring{system\_delete()}{system\_delete()}}
+{\footnotesize\ttfamily \label{system_8h_adab9a110141ccce185af981adbc62515} 
+void system\+\_\+delete (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_system}{System}} \texorpdfstring{$\ast$}{*}}]{system\+\_\+current}{}\end{DoxyParamCaption})}
+
+
+
+Sletter systemobjektet. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em system\+\_\+current} & En peker til systemobjektet som skal slettes \\
+\hline
+\end{DoxyParams}

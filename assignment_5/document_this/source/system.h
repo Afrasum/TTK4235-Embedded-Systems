@@ -1,6 +1,11 @@
 #ifndef SYSTEM_H
 #define SYSTEM_H
 
+/**
+ * @file system.h
+ * @brief Definerer systemobjeter of funksjoner for å representere og håndtere systemer
+ */
+
 /*
  * @brief Enum of tuning rules
  */
@@ -19,10 +24,21 @@ typedef struct {
 } System;
 
 
-// Document this
+/**
+ * @brief Oppretter nytt systemobjekt
+ *
+ * @param[in] Ku Gain margin for loop stability
+ * @param[in] Tu Period of the oscillations frequency at the stability limit
+ * @param[in] tuning_method Ønsket PID tuning metode 
+ * @return En peker til det nyopprettede systemobjektet
+ */
 System * system_create(double Ku, double Tu, Tuning tuning_method);
 
-// Document this
+/**
+ * @brief Sletter systemobjektet
+ *
+ * @param[in] system_current En peker til systemobjektet som skal slettes
+ */
 void system_delete(System * system_current);
 
 #endif
