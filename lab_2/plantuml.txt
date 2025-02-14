@@ -1,0 +1,66 @@
+@startuml
+allowmixing
+
+' (valgfritt) Innstillinger for utseende
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+
+actor Bruker
+
+' -- Klassedefinisjoner --
+class HeisSystem {
+    int currentEtasje
+    Retning retning
+    bool dorApen
+    ' ... evt flere felt / metoder ...
+}
+
+enum Retning {
+    OPP
+    NED
+    STILL
+}
+
+enum KnappType {
+    OPP
+    NED
+    STOPP
+    ETASJE
+}
+
+class BetjeningsPanel {
+    ' ... innhold hvis ønskelig ...
+}
+
+class Knapp {
+    KnappType type
+    ' ... innhold hvis ønskelig ...
+}
+
+class Sensor {
+    ' ... innhold hvis ønskelig ...
+}
+
+class Motorstyring {
+    ' ... innhold hvis ønskelig ...
+}
+
+class Bestilling {
+    BestillingType type
+    ' ... evt tillegg ...
+}
+
+enum BestillingType {
+    INNE
+    UTE_OPP
+    UTE_NED
+}
+
+' -- Relasjoner mellom klasser --
+HeisSystem -> Motorstyring
+HeisSystem -> BetjeningsPanel
+HeisSystem -> Sensor
+BetjeningsPanel -> Knapp
+HeisSystem -> Bestilling
+
+@enduml
