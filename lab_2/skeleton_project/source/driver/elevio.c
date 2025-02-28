@@ -63,7 +63,7 @@ void elevio_buttonLamp(int floor, ButtonType button, int value){
 }
 
 
-void elevio_floorIndicator(int floor){
+void elevio_floorIndicatorfloor(int floor){
     assert(floor >= 0);
     assert(floor < N_FLOORS);
 
