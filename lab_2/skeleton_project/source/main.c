@@ -4,20 +4,25 @@
 #include <signal.h>
 #include <time.h>
 #include "driver/elevio.h"
+#include "elevator.h"
 
-
-int main() {
-    Elevator elev;
+int main()
+{
+    Elevator el;
+    Elevator *p_el = &el;
     elevio_init();
-    
+    el.dir = 1;
+    // elevator_init(&el);
+
     printf("Press the stop button on the elevator panel to exit\n");
 
-    elevio_motorDirection(DIRN_UP);
+    // elevio_motorDirection(DIRN_UP);
 
-    while(1){
-        int floor = elevio_floorSensor();
+    while (1)
+    {
+        panel(p_el);
+        // int floor = elevio_floorSensor();
 
-         
         /* if(floor == 0){ */
         /*     elevio_motorDirection(DIRN_UP); */
         /* } */

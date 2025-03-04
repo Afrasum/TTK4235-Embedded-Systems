@@ -8,7 +8,7 @@ typedef struct
 
     bool has_stopped;
     int dir;
-    bool door;
+    bool door_is_open;
     int floor;
     int floor_stops[4];
     bool sensor;
@@ -24,3 +24,6 @@ void update_stops(Elevator *elev, int floor, bool value);
 void update_door(Elevator *elev, bool value);
 void update_has_stopped(Elevator *elev, bool value);
 void update_floor(Elevator *elev, int value);
+void elevator_init(Elevator *elev);
+void panel(Elevator *elev);
+
