@@ -1,8 +1,10 @@
-#include <iostream>
-#include <vector>
+#pragma once
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
 
-
-typedef struct {
+typedef struct
+{
 
     bool has_stopped;
     int dir;
@@ -10,18 +12,15 @@ typedef struct {
     int floor;
     int floor_stops[4];
     bool sensor;
-    std::vector<bool> vil_opp;
-    std::vector<bool> vil_ned;
-
+    int size;
+    bool vil_opp[4];
+    bool vil_ned[4];
 
 } Elevator;
 
-void elevator_init(Elevator &elev);
-
-void update_vil_opp(Elevator &elev, int floor, bool value);
-void update_vil_ned(Elevator &elev, int floor, bool value);
-void update_stops(Elevator &elev, int floor, bool value);
-void update_door(Elevator &elev, bool value);
-void update_has_stopped(Elevator &elev, bool value);
-void update_floor(Elevator &elev, int value);
-void update_sensor(Elevator &elev, bool value);
+void update_vil_opp(Elevator *elev, int floor, bool value);
+void update_vil_ned(Elevator *elev, int floor, bool value);
+void update_stops(Elevator *elev, int floor, bool value);
+void update_door(Elevator *elev, bool value);
+void update_has_stopped(Elevator *elev, bool value);
+void update_floor(Elevator *elev, int value);
