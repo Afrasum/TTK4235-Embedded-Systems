@@ -64,4 +64,13 @@ void get_next_dir(Elevator &elev){
     }
 }
 
-
+void elevator_init(Elevator &elev){
+    elev.has_stopped = true;
+    elev.dir = 1;
+    elev.door = elevio_doorOpenLamp();
+    elev.floor = elevio_floorSensor();
+    elev.sensor = elevio_floorSensor();
+    elev.vil_opp = {false, false, false, false};
+    elev.vil_ned = {false, false, false, false};
+    elev.floor_stops = {false, false, false, false};
+}
