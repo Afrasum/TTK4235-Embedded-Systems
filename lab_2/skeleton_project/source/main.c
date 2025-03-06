@@ -12,15 +12,19 @@ int main()
     Elevator *p_el = &el;
     elevio_init();
     el.dir = 1;
-    // elevator_init(&el);
+    elevator_init(&el);
 
     printf("Press the stop button on the elevator panel to exit\n");
+    
+    
 
     // elevio_motorDirection(DIRN_UP);
 
     while (1)
     {
-        panel(p_el);
+        epanel(p_el);
+        fpanel(p_el);
+        arrival(p_el);
         // int floor = elevio_floorSensor();
 
         /* if(floor == 0){ */
@@ -39,18 +43,20 @@ int main()
         /*     } */
         /* } */
         /**/
-        /* if(elevio_obstruction()){ */
-        /*     elevio_stopLamp(1); */
-        /* } else { */
-        /*     elevio_stopLamp(0); */
-        /* } */
-        /*  */
-        /* if(elevio_stopButton()){ */
-        /*     elevio_motorDirection(DIRN_STOP); */
-        /*     break; */
-        /* } */
-        /*  */
-        /* nanosleep(&(struct timespec){0, 20*1000*1000}, NULL); */
+      
+
+         if(elevio_obstruction()){ 
+             elevio_stopLamp(1); 
+         } else { 
+             elevio_stopLamp(0); 
+        } 
+        
+         if(elevio_stopButton()){ 
+            elevio_motorDirection(DIRN_STOP); 
+             break; 
+         } 
+          
+        nanosleep(&(struct timespec){0, 20*1000*1000}, NULL); 
     }
 
     return 0;
