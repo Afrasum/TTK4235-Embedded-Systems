@@ -89,6 +89,7 @@ void get_next_dir(Elevator *elev)
     if (elev->floor == 3)
     {
         elev->dir = 0;
+        elev->has_stopped=true;
     } else if (elev->floor == 0)
     {
         for (int i = 1; i <= 3; i++)
@@ -160,43 +161,7 @@ void elevator_init(Elevator *elev)
 
 //Sjekker hvilke knapper i heispanelen er trukket på, og setter verdiene i floor_stops. Oppdaterer lys i tillegg
 void epanel(Elevator *elev)
-{f(p_el->door_is_open==0 && p_el->has_stopped==1 || p_el->dir==1 && p_el->floor==4 || p_el->dir==0 && p_el->floor==1){
-
-                    get_next_dir(p_el);
-                    
-                }
-                // int floor = elevio_floorSensor();
-
-                /* if(floor == 0){ */
-                /*     elevio_motorDirection(DIRN_UP); */
-                /* } */
-                /**/
-                /* if(floor == N_FLOORS-1){ */
-                /*     elevio_motorDirection(DIRN_DOWN); */
-                /* } */
-                /**/
-                /**/
-                /* for(int f = 0; f < N_FLOORS; f++){ */
-                /*     for(int b = 0; b < N_BUTTONS; b++){ */
-                /*         int btnPressed = elevio_callButton(f, b); */
-                /*         elevio_buttonLamp(f, b, btnPressed); */
-                /*     } */
-                /* } */
-                /**/
-            
-
-                if(elevio_obstruction()){ 
-                    elevio_stopLamp(1); 
-                } else { 
-                    elevio_stopLamp(0); 
-                } 
-                
-                if(elevio_stopButton()){ 
-                    elevio_motorDirection(DIRN_STOP); 
-                    break; 
-                } 
-            }
-
+{
     int floor_pushed;
     for (int i = 0; i <= N_FLOORS-1; i++)
     {
