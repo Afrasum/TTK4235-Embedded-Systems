@@ -20,6 +20,7 @@ void update_stops(Elevator *elev, int floor, bool value)
 void update_door(Elevator *elev, bool value)
 {
     elev->door_is_open = value;
+    elevio_doorOpenLamp(value);
 }
 
 void update_has_stopped(Elevator *elev, bool value)
@@ -109,9 +110,11 @@ void elevator_init(Elevator *elev)
         }
     }
 
+    
     elev->has_stopped = true;
     elev->dir = DIRN_STOP;
     elev->door_is_open = false;
+    elevio_doorOpenLamp(0);
     elev->floor = elevio_floorSensor();
     elev->sensor = elevio_floorSensor();
     for (int i = 0; i < 4; i++)
@@ -151,8 +154,8 @@ void epanel(Elevator *elev)
         printf("%d ", elev->floor_stops[i]);
     }
     printf("\n");
-    */
-
+    
+*/
 }
 
 
@@ -201,11 +204,12 @@ void fpanel(Elevator *elev){
     
 
 void arrival(Elevator *elev){
-    //Sjekker om man har ankommet en etasje som har blitt trykket på, skrur dermed lyset på etasjen, og endrer verdien til 0 i den etasjen. 
+    //Sjekker om man har ankommet en etasje som har blitt trykket på, skrur dermed lyset av etasjen, og endrer verdien til 0 i den etasjen. 
 
     //EtasjePanel
     int floor=elevio_floorSensor();
-    if(elev->vil_ned[floor]==1){
+    if(elev->vil_ned[floor]==1)
+    {
 
         elevio_buttonLamp(floor, BUTTON_HALL_DOWN, 0);
         elev->vil_ned[floor]=0;
@@ -218,22 +222,31 @@ void arrival(Elevator *elev){
 
     }
 
-    //Heispanel
-    if(elev->floor_stops[floor]==1){
+ //Dør
+    
+    /*
+    if(elev->floor_stops[floor]==1)
+    {
+        elev->door_is_open=1;
+        elevio_doorOpenLamp(1);
+        printf("%d ", elev->door_is_open);
 
+    }
+    */
+
+
+    //Heispanel
+    if(elev->floor_stops[floor]==1)
+    {
+        elev->door_is_open=1;
+        elevio_doorOpenLamp(1);
         elevio_buttonLamp(floor, BUTTON_CAB, 0);
         elev->floor_stops[floor]=0;
 
     }
 
-    //Dør
+   
     
-    if(elev->floor_stops[floor]==1 || elev->vil_ned[floor] || elev->vil_opp[floor]){
-        elev->door_is_open=1;
-        elevio_doorOpenLamp(1);
-    }
-
         
-    printf("%d ", elev->door_is_open);
 
 }
