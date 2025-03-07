@@ -5,12 +5,30 @@
 
 void get_states(Elevator *elev)
 {
+    fpanel(elev);
+    epanel(elev);
+
     elev->sensor = elevio_floorSensor();
     if (elev->sensor != -1)
     {
         elev->floor = elev->sensor;
     }
-    fpanel(elev);
+
+    if (elevio_stopButton())
+    {
+        elev->stop_button = true;
+    } else
+    {
+        elev->has_stopped = false;
+    } 
+
+    if (elevio_obstruction())
+    {
+        elev->obstruction = true;
+    } else
+    {
+        elev->obstruction = false;
+    }
 }
 
 void update_states(Elevator *elev)
@@ -151,21 +169,6 @@ void epanel(Elevator *elev)
             elev->floor_stops[i] = 1;
         }
     }
-//Sjekker om man har ankommet en etasje som har blitt trykket på, skrur dermed lyset på etasjen, og endrer verdien til 0 i den etasjen. 
-    int floor=elevio_floorSensor();
-    if(elev->floor_stops[floor]==1){
-
-        elev->floor_stops[floor]=0;
-
-    }
-    /*
-    printf("etasje: ");
-    for (int i = 0; i < N_FLOORS; i++) {
-        printf("%d ", elev->floor_stops[i]);
-    }
-    printf("\n");
-    
-*/
 }
 
 
@@ -180,31 +183,17 @@ void fpanel(Elevator *elev){
         up_pressed = elevio_callButton(i, BUTTON_HALL_UP);
         down_pressed = elevio_callButton(i, BUTTON_HALL_DOWN);
        
-        if (up_pressed) {
+        if (up_pressed) 
+        {
             elev->vil_opp[i] = 1;
         }
     
-        if(down_pressed){
+        if(down_pressed)
+        {
             elev->vil_ned[i]=1;
         }
     }
 
-
-    
-    /*
-    printf("vil_ned: ");
-        for (int i = 0; i < N_FLOORS; i++) {
-            printf("%d ", elev->vil_ned[i]);
-        }
-        printf("\n");
-    
-        printf("vil_opp: ");
-        for (int i = 0; i < N_FLOORS; i++) {
-            printf("%d ", elev->vil_opp[i]);
-        }
-        printf("\n");
-    
-        */
 }
     
 
