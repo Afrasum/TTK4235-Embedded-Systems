@@ -26,6 +26,9 @@ void update_stops(Elevator *elev, int floor, bool value);
 void update_door(Elevator *elev, bool value);
 void update_has_stopped(Elevator *elev, bool value);
 void update_floor(Elevator *elev, int value);
+
+void update_states(Elevator *elev);
+void get_next_dir(Elevator *elev);
 void elevator_init(Elevator *elev);
 void epanel(Elevator *elev);
 void fpanel(Elevator *elev);
