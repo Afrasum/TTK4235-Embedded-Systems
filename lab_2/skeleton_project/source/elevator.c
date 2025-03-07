@@ -10,9 +10,6 @@ void get_states(Elevator *elev)
     {
         elev->floor = elev->sensor;
     }
-    elev->dir = elevio_motorDirection();
-    elev->door_is_open = elevio_doorOpenLamp();
-    elev->has_stopped = elevio_stopButton();
     fpanel(elev);
 }
 
@@ -20,7 +17,7 @@ void update_states(Elevator *elev)
 {
     if (elev->has_stopped)
     {
-        elevio_motorDirection(DIRN_STOP);
+        elevio_motorDpanel(Elevator *elev)irection(DIRN_STOP);
     } else if (elev->dir == 1)
     {
         elevio_motorDirection(DIRN_UP);
@@ -34,7 +31,7 @@ void update_states(Elevator *elev)
         elevio_buttonLamp(i, BUTTON_HALL_UP, elev->vil_opp[i]);
         elevio_buttonLamp(i, BUTTON_HALL_DOWN, elev->vil_ned[i]);
         elevio_buttonLamp(i, BUTTON_CAB, elev->floor_stops[i]);
-    }
+    }panel(Elevator *elev)
 
     if (elev->door_is_open)
     {

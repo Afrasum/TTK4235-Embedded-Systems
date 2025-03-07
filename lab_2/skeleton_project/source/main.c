@@ -21,8 +21,10 @@ int main()
 
     while (1)
     {
-        epanel(p_el);
-        fpanel(p_el);
+        get_states(p_el);
+
+
+    
         arrival(p_el);
         // int floor = elevio_floorSensor();
 
