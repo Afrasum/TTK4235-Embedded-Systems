@@ -11,7 +11,6 @@ int main()
     Elevator el;
     Elevator *p_el = &el;
     elevio_init();
-    el.dir = 1;
     elevator_init(&el);
 
     printf("Press the stop button on the elevator panel to exit\n");
