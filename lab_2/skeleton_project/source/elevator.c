@@ -19,7 +19,7 @@ void get_states(Elevator *elev)
         elev->stop_button = true;
     } else
     {
-        elev->has_stopped = false;
+        elev->stop_button = false;
     } 
 
     if (elevio_obstruction())
@@ -35,6 +35,7 @@ void update_states(Elevator *elev)
 {
     if (elev->has_stopped)
     {
+        printf("Setting motordirn stop");
         elevio_motorDirection(DIRN_STOP);
     } else if (elev->dir == 1)
     {
@@ -89,7 +90,6 @@ void get_next_dir(Elevator *elev)
     if (elev->floor == 3)
     {
         elev->dir = 0;
-        elev->has_stopped=true;
     } else if (elev->floor == 0)
     {
         for (int i = 1; i <= 3; i++)
@@ -98,6 +98,7 @@ void get_next_dir(Elevator *elev)
             if (elev->vil_opp[i] || elev->vil_ned[i] || elev->floor_stops[i])
             {
                 elev->dir = 1;
+                elev->has_stopped = false;
                 break;
             }
         }
@@ -109,6 +110,8 @@ void get_next_dir(Elevator *elev)
             if (elev->vil_opp[i] || elev->vil_ned[i] || elev->floor_stops[i])
             {
                 elev->dir = 1;
+                elev->has_stopped = false;
+                
                 break;
             }
         }
@@ -119,12 +122,14 @@ void get_next_dir(Elevator *elev)
             if (elev->vil_opp[i] || elev->vil_ned[i] || elev->floor_stops[i])
             {
                 elev->dir = 0;
+                elev->has_stopped = false;
                 break;
             }
         }
     } else
     {
         elev->dir = 0;
+        elev->has_stopped = false;
     }
 }
 
@@ -148,7 +153,7 @@ void elevator_init(Elevator *elev)
     elev->has_stopped = true;
     elev->dir = 1;
     elev->door_is_open = false;
-    elevio_doorOpenLamp(0);
+    elevio_doorOpenLamp(false);
     elev->floor = elevio_floorSensor();
     elev->sensor = elevio_floorSensor();
     for (int i = 0; i < 4; i++)
@@ -232,6 +237,36 @@ void arrival(Elevator *elev){
 
     }
 
-    printf("%d ", elev->door_is_open);
+    //printf("%d ", elev->door_is_open);
 
+}
+
+void printElevator(Elevator *e) {
+    // Boolske felt – skriv ut som "true"/"false".
+    printf("has_stopped:  %s\n", e->has_stopped  ? "true" : "false");
+    printf("door_is_open: %s\n", e->door_is_open ? "true" : "false");
+    printf("obstruction:  %s\n", e->obstruction  ? "true" : "false");
+    printf("stop_button:  %s\n", e->stop_button  ? "true" : "false");
+
+    // Enkle heltallsfelt.
+    printf("dir:    %d\n", e->dir);
+    printf("floor:  %d\n", e->floor);
+    printf("sensor: %d\n", e->sensor);
+    printf("size:   %d\n", e->size);
+
+    // Array-felter. Bruk løkker for å gå gjennom dem.
+    printf("floor_stops:\n");
+    for (int i = 0; i < 4; i++) {
+        printf("  [%d] = %d\n", i, e->floor_stops[i]);
+    }
+
+    printf("vil_opp:\n");
+    for (int i = 0; i < 4; i++) {
+        printf("  [%d] = %s\n", i, e->vil_opp[i] ? "true" : "false");
+    }
+
+    printf("vil_ned:\n");
+    for (int i = 0; i < 4; i++) {
+        printf("  [%d] = %s\n", i, e->vil_ned[i] ? "true" : "false");
+    }
 }
