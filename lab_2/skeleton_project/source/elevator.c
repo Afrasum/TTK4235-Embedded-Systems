@@ -86,8 +86,12 @@ void update_states(Elevator *elev)
 void get_next_dir(Elevator *elev)
 {
     // Hvis vi er i øverste etasje (4), stopper heisen
+
     if (elev->floor == 3)
+
     {
+        elev->dir=0;
+
         for (int i = elev->floor - 1; i >= 0; i--)
         {
             if (elev->vil_opp[i] || elev->vil_ned[i] || elev->floor_stops[i])
@@ -99,7 +103,8 @@ void get_next_dir(Elevator *elev)
         }
     } else if (elev->floor == 0)
     {
-        for (int i = 1; i <= 3; i++)
+         
+        for (int i = 0; i <= 3; i++)
         {
             // Sjekker om det er noen som vil opp, ned eller om det er noen som har trykket på knappene i heisen
             if (elev->vil_opp[i] || elev->vil_ned[i] || elev->floor_stops[i])
@@ -260,6 +265,7 @@ if(elev->vil_ned[floor]==1){
         }
 
 }
+
 */
 
     if(elev->vil_ned[floor]==1 && dir==0){
@@ -270,7 +276,7 @@ if(elev->vil_ned[floor]==1){
 
     }
 
-    /*
+   /* 
     if(elev->vil_opp[floor]==1){
         
         bool continue_down=false;
@@ -288,8 +294,10 @@ if(elev->vil_ned[floor]==1){
 
 
     }
-    */
+}
+*/
 
+    
     if(elev->vil_opp[floor]==1 && dir==1){
 
         elev->vil_opp[floor]=0;
@@ -343,3 +351,26 @@ void printElevator(Elevator *e) {
         printf("  [%d] = %s\n", i, e->vil_ned[i] ? "true" : "false");
     }
 }
+
+
+//.               ,.
+//T."-._..---.._,-"/|
+//l|"-.  _.v._   (" |
+//[l /.'_ \; _~"-.`-t
+//Y " _(o} _{o)._ ^.|
+//j  T  ,-<v>-.  T  ]
+//\  l ( /-^-\ ) !  !
+// \. \.  "~"  ./  /c-..,__
+//   ^r- .._ .- .-"  `- .  ~"--.
+//    > \.                      \
+//    ]   ^.                     \
+//    3  .  ">            .       Y  -Mjau
+//,.__.--._   _j   \ ~   .         ;       |
+//(    ~"-._~"^._\   ^.    ^._      I     . l
+//"-._ ___ ~"-,_7    .Z-._   7"   Y      ;  \        _
+///"   "~-(r r  _/_--._~-/    /      /,.--^-._   / Y
+//"-._    '"~~~>-._~]>--^---./____,.^~        ^.^  !
+//~--._    '   Y---.                        \./
+//   ~~--._  l_   )                        \
+//         ~-._~~~---._,____..---           \
+//             ~----"~       \

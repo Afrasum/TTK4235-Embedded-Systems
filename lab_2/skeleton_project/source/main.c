@@ -59,7 +59,7 @@ int main()
 
         printf("3");
         if(p_el->door_is_open==0){
-            if(p_el->door_is_open==0 && p_el->has_stopped==true || p_el->dir==1 && p_el->floor==3 || p_el->dir==0 && p_el->floor==1){
+            if(p_el->door_is_open==0 && p_el->has_stopped==true || p_el->dir==1 && p_el->floor==3 || p_el->dir==0 && p_el->floor==0){
                     get_next_dir(p_el);
 
                     
