@@ -11,7 +11,7 @@ typedef struct
     bool door_is_open;
     int floor;
     int floor_stops[4];
-    bool sensor;
+    int sensor;
     int size;
     bool vil_opp[4];
     bool vil_ned[4];
