@@ -6,10 +6,64 @@
 void get_states(Elevator *elev)
 {
     elev->sensor = elevio_floorSensor();
+    if (elev->sensor != -1)
+    {
+        elev->floor = elev->sensor;
+    }
     elev->dir = elevio_motorDirection();
     elev->door_is_open = elevio_doorOpenLamp();
     elev->has_stopped = elevio_stopButton();
+    fpanel(elev);
 }
+
+void update_states(Elevator *elev)
+{
+    if (elev->has_stopped)
+    {
+        elevio_motorDirection(DIRN_STOP);
+    } else if (elev->dir == 1)
+    {
+        elevio_motorDirection(DIRN_UP);
+    } else if (elev->dir == 0)
+    {
+        elevio_motorDirection(DIRN_DOWN);
+    }
+
+    for (int i = 0; i < 4; i++)
+    {
+        elevio_buttonLamp(i, BUTTON_HALL_UP, elev->vil_opp[i]);
+        elevio_buttonLamp(i, BUTTON_HALL_DOWN, elev->vil_ned[i]);
+        elevio_buttonLamp(i, BUTTON_CAB, elev->floor_stops[i]);
+    }
+
+    if (elev->door_is_open)
+    {
+        elevio_doorOpenLamp(1);
+    } else
+    {
+        elevio_doorOpenLamp(0);
+    }
+
+    if (elev->floor == 0)
+    {
+        elevio_floorIndicator(0);
+    } else if (elev->floor == 1)
+    {
+        elevio_floorIndicator(1);
+    } else if (elev->floor == 2)
+    {
+        elevio_floorIndicator(2);
+    } else if (elev->floor == 3)
+    {
+        elevio_floorIndicator(3);
+    }
+
+    if (elev->has_stopped)
+    {
+        elevio_stopLamp(1);
+    } 
+}
+
 
 
 
@@ -96,14 +150,12 @@ void epanel(Elevator *elev)
         floor_pushed=elevio_callButton(i, BUTTON_CAB);
         if(floor_pushed){
             elev->floor_stops[i] = 1;
-            elevio_buttonLamp(i, BUTTON_CAB, 1);
         }
     }
 //Sjekker om man har ankommet en etasje som har blitt trykket på, skrur dermed lyset på etasjen, og endrer verdien til 0 i den etasjen. 
     int floor=elevio_floorSensor();
     if(elev->floor_stops[floor]==1){
 
-        elevio_buttonLamp(floor, BUTTON_CAB, 0);
         elev->floor_stops[floor]=0;
 
     }
@@ -131,12 +183,10 @@ void fpanel(Elevator *elev){
        
         if (up_pressed) {
             elev->vil_opp[i] = 1;
-            elevio_buttonLamp(i,BUTTON_HALL_UP,1);
         }
     
         if(down_pressed){
             elev->vil_ned[i]=1;
-            elevio_buttonLamp(i, BUTTON_HALL_DOWN,1);
         }
     }
 
@@ -164,28 +214,22 @@ void arrival(Elevator *elev, int floor, int dir){
     //EtasjePanel
     if(elev->vil_ned[floor]==1 && dir==0){
 
-        elevio_buttonLamp(floor, BUTTON_HALL_DOWN, 0);
         elev->vil_ned[floor]=0;
         elev->door_is_open=1;
-        elevio_doorOpenLamp(1);
 
     }
     if(elev->vil_opp[floor]==1 && dir==1){
 
-        elevio_buttonLamp(floor, BUTTON_HALL_UP, 0);
         elev->vil_opp[floor]=0;
         elev->door_is_open=1;
-        elevio_doorOpenLamp(1);
 
     }
 
     //Heispanel
     if(elev->floor_stops[floor]==1){
 
-        elevio_buttonLamp(floor, BUTTON_CAB, 0);
         elev->floor_stops[floor]=0;
         elev->door_is_open=1;
-        elevio_doorOpenLamp(1);
 
     }
 
