@@ -21,9 +21,7 @@ int main()
 
     while (1)
     {
-        epanel(p_el);
-        fpanel(p_el);
-        arrival(p_el);
+        get_states(p_el);
         // int floor = elevio_floorSensor();
 
         /* if(floor == 0){ */
@@ -55,6 +53,8 @@ int main()
              break; 
          } 
           
+
+        update_states(p_el);
         nanosleep(&(struct timespec){0, 20*1000*1000}, NULL); 
     }
 

@@ -15,6 +15,8 @@ typedef struct
     int size;
     bool vil_opp[4];
     bool vil_ned[4];
+    bool obstruction;
+    bool stop_button;
 
 } Elevator;
 
