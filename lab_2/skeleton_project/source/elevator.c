@@ -2,56 +2,102 @@
 #include "driver/elevio.h"
 #include "stdio.h"
 
-void update_vil_opp(Elevator *elev, int floor, bool value)
+
+void get_states(Elevator *elev)
 {
-    elev->vil_opp[floor] = value;
+    fpanel(elev);
+    epanel(elev);
+
+    elev->sensor = elevio_floorSensor();
+    if (elev->sensor != -1)
+    {
+        elev->floor = elev->sensor;
+    }
+
+    if (elevio_stopButton())
+    {
+        elev->stop_button = true;
+    } else
+    {
+        elev->stop_button = false;
+    } 
+
+    if (elevio_obstruction())
+    {
+        elev->obstruction = true;
+    } else
+    {
+        elev->obstruction = false;
+    }
 }
 
-void update_vil_ned(Elevator *elev, int floor, bool value)
+void update_states(Elevator *elev)
 {
-    elev->vil_ned[floor] = value;
+    if (elev->has_stopped)
+    {
+        elevio_motorDirection(DIRN_STOP);
+    } else if (elev->dir == 1)
+    {
+        elevio_motorDirection(DIRN_UP);
+    } else if (elev->dir == 0)
+    {
+        elevio_motorDirection(DIRN_DOWN);
+    }
+
+    for (int i = 0; i < 4; i++)
+    {
+        elevio_buttonLamp(i, BUTTON_HALL_UP, elev->vil_opp[i]);
+        elevio_buttonLamp(i, BUTTON_HALL_DOWN, elev->vil_ned[i]);
+        elevio_buttonLamp(i, BUTTON_CAB, elev->floor_stops[i]);
+    }
+
+    if (elev->door_is_open)
+    {
+        elevio_doorOpenLamp(1);
+    } else
+    {
+        elevio_doorOpenLamp(0);
+    }
+
+    if (elev->floor == 0)
+    {
+        elevio_floorIndicator(0);
+    } else if (elev->floor == 1)
+    {
+        elevio_floorIndicator(1);
+    } else if (elev->floor == 2)
+    {
+        elevio_floorIndicator(2);
+    } else if (elev->floor == 3)
+    {
+        elevio_floorIndicator(3);
+    }
+
+    if (elev->has_stopped)
+    {
+        elevio_stopLamp(1);
+    } 
 }
 
-void update_stops(Elevator *elev, int floor, bool value)
-{
-    elev->floor_stops[floor] = value;
-}
 
-void update_door(Elevator *elev, bool value)
-{
-    elev->door_is_open = value;
-}
 
-void update_has_stopped(Elevator *elev, bool value)
-{
-    elev->has_stopped = value;
-}
 
-void update_floor(Elevator *elev, int value)
-{
-    elev->floor = value;
-
-}
-
-void update_dir(Elevator *elev, int value)
-{
-    elev->dir = value;
-}
-
-void update_sensor(Elevator *elev, bool value)
-{
-    elev->sensor = value;
-
-}
 
 void get_next_dir(Elevator *elev)
 {
     // Hvis vi er i øverste etasje (4), stopper heisen
     if (elev->floor == 3)
     {
-        elev->dir = DIRN_STOP;
-    }
-    else if (elev->floor == 0)
+        for (int i = elev->floor - 1; i >= 0; i--)
+        {
+            if (elev->vil_opp[i] || elev->vil_ned[i] || elev->floor_stops[i])
+            {
+                elev->dir = 0;
+                elev->has_stopped = false;
+                break;
+            }
+        }
+    } else if (elev->floor == 0)
     {
         for (int i = 1; i <= 3; i++)
         {
@@ -59,11 +105,11 @@ void get_next_dir(Elevator *elev)
             if (elev->vil_opp[i] || elev->vil_ned[i] || elev->floor_stops[i])
             {
                 elev->dir = 1;
+                elev->has_stopped = false;
                 break;
             }
         }
-    }
-    else if (elev->dir == 1)
+    } else if (elev->dir == 1)
     {
         // Sjekker om det er noen som vil opp, ned i etasjer over hvor heisen er eller om det er noen som har trykket på knappene i heisen
         for (int i = elev->floor + 1; i <= 3; i++)
@@ -71,25 +117,50 @@ void get_next_dir(Elevator *elev)
             if (elev->vil_opp[i] || elev->vil_ned[i] || elev->floor_stops[i])
             {
                 elev->dir = 1;
+                elev->has_stopped = false;
+                
                 break;
             }
+
         }
-    }
-    // Sjekker om det er noen som vil opp, ned i etasjer under hvor heisen er eller om det er noen som har trykket på knappene i heisen
-    else if (elev->dir == 0)
+        for (int i = elev->floor - 1; i >=0; i--)
+        {
+            if (elev->vil_opp[i] || elev->vil_ned[i] || elev->floor_stops[i])
+            {
+                elev->dir = 0;
+                elev->has_stopped = false;
+                
+                break;
+            }
+
+        }
+        
+    } else if (elev->dir == 0)
     {
         for (int i = elev->floor - 1; i >= 0; i--)
         {
             if (elev->vil_opp[i] || elev->vil_ned[i] || elev->floor_stops[i])
             {
                 elev->dir = 0;
+                elev->has_stopped = false;
                 break;
             }
         }
-    }
-    else
+        for (int i = elev->floor + 1; i <= 3; i++)
+        {
+            if (elev->vil_opp[i] || elev->vil_ned[i] || elev->floor_stops[i])
+            {
+                elev->dir = 1;
+                elev->has_stopped = false;
+                
+                break;
+            }
+
+        }
+    } else
     {
         elev->dir = 0;
+        elev->has_stopped = false;
     }
 }
 
@@ -101,7 +172,8 @@ void elevator_init(Elevator *elev)
 
         elevio_motorDirection(DIRN_DOWN);
 
-        if (elevio_floorSensor() == 0)
+        if (elevio_floorSensor() == 0)    {
+
         {
             elevio_motorDirection(DIRN_STOP);
 
@@ -109,9 +181,11 @@ void elevator_init(Elevator *elev)
         }
     }
 
+    
     elev->has_stopped = true;
-    elev->dir = DIRN_STOP;
+    elev->dir = 1;
     elev->door_is_open = false;
+    elevio_doorOpenLamp(false);
     elev->floor = elevio_floorSensor();
     elev->sensor = elevio_floorSensor();
     for (int i = 0; i < 4; i++)
@@ -121,38 +195,19 @@ void elevator_init(Elevator *elev)
         elev->floor_stops[i] = 0;
     }
 }
+}
 
 //Sjekker hvilke knapper i heispanelen er trukket på, og setter verdiene i floor_stops. Oppdaterer lys i tillegg
 void epanel(Elevator *elev)
 {
-
     int floor_pushed;
     for (int i = 0; i <= N_FLOORS-1; i++)
     {
         floor_pushed=elevio_callButton(i, BUTTON_CAB);
-
-
         if(floor_pushed){
             elev->floor_stops[i] = 1;
-            elevio_buttonLamp(i, BUTTON_CAB, 1);
         }
     }
-//Sjekker om man har ankommet en etasje som har blitt trykket på, skrur dermed lyset på etasjen, og endrer verdien til 0 i den etasjen. 
-    int floor=elevio_floorSensor();
-    if(elev->floor_stops[floor]==1){
-
-        elevio_buttonLamp(floor, BUTTON_CAB, 0);
-        elev->floor_stops[floor]=0;
-
-    }
-    /*
-    printf("etasje: ");
-    for (int i = 0; i < N_FLOORS; i++) {
-        printf("%d ", elev->floor_stops[i]);
-    }
-    printf("\n");
-    */
-
 }
 
 
@@ -166,74 +221,125 @@ void fpanel(Elevator *elev){
     {
         up_pressed = elevio_callButton(i, BUTTON_HALL_UP);
         down_pressed = elevio_callButton(i, BUTTON_HALL_DOWN);
-        if(up_pressed){
-        elev->vil_opp[i] = 1;
+       
+        if (up_pressed) 
+        {
+            elev->vil_opp[i] = 1;
         }
-        if(down_pressed){
+    
+        if(down_pressed)
+        {
             elev->vil_ned[i]=1;
         }
-        if (up_pressed){
-            elevio_buttonLamp(i,BUTTON_HALL_UP,1);
-        }
-        if (down_pressed){
-            elevio_buttonLamp(i, BUTTON_HALL_DOWN,1);
-        }
-
     }
 
-
-    
-    /*
-    printf("vil_ned: ");
-        for (int i = 0; i < N_FLOORS; i++) {
-            printf("%d ", elev->vil_ned[i]);
-        }
-        printf("\n");
-    
-        printf("vil_opp: ");
-        for (int i = 0; i < N_FLOORS; i++) {
-            printf("%d ", elev->vil_opp[i]);
-        }
-        printf("\n");
-    
-        */
 }
     
 
 void arrival(Elevator *elev){
     //Sjekker om man har ankommet en etasje som har blitt trykket på, skrur dermed lyset på etasjen, og endrer verdien til 0 i den etasjen. 
-
     //EtasjePanel
-    int floor=elevio_floorSensor();
-    if(elev->vil_ned[floor]==1){
 
-        elevio_buttonLamp(floor, BUTTON_HALL_DOWN, 0);
+    int floor = elev->floor;
+    int dir = elev->dir;
+
+/*
+if(elev->vil_ned[floor]==1){
+
+        bool continue_up=false;
+        for (int i= floor+1; i<=N_FLOORS-1; i++){
+            if(elev->vil_opp[floor]){
+                continue_up=true;
+                break;
+            }
+        }
+        if(continue_up!=true ){
+                elev->vil_ned[floor]=0;
+                elev->door_is_open=true;
+                elev->has_stopped=true;
+        }
+
+}
+*/
+
+    if(elev->vil_ned[floor]==1 && dir==0){
+
         elev->vil_ned[floor]=0;
+        elev->door_is_open=true;
+        elev->has_stopped=true;
 
     }
-    if(elev->vil_opp[floor]==1){
 
-        elevio_buttonLamp(floor, BUTTON_HALL_UP, 0);
+    /*
+    if(elev->vil_opp[floor]==1){
+        
+        bool continue_down=false;
+        for (int i= floor-1; i>=0; i--){
+            if(elev->vil_ned[floor]){
+                continue_down=true;
+                break;
+            }
+        }
+        if(continue_down!=true ){
+
+            elev->vil_opp[floor]=0;
+            elev->door_is_open=true;
+            elev->has_stopped=true;
+
+
+    }
+    */
+
+    if(elev->vil_opp[floor]==1 && dir==1){
+
         elev->vil_opp[floor]=0;
+        elev->door_is_open=true;
+        elev->has_stopped=true;
+
 
     }
 
     //Heispanel
     if(elev->floor_stops[floor]==1){
 
-        elevio_buttonLamp(floor, BUTTON_CAB, 0);
         elev->floor_stops[floor]=0;
+        elev->door_is_open=true;
+        elev->has_stopped=true;
+
 
     }
 
-    //Dør
-    
-    if(elev->floor_stops[floor]==1 || elev->vil_ned[floor] || elev->vil_opp[floor]){
-        elev->door_is_open=1;
-        elevio_doorOpenLamp(1);
+    //printf("%d ", elev->door_is_open);
+
+}
+
+
+void printElevator(Elevator *e) {
+    // Boolske felt – skriv ut som "true"/"false".
+    printf("has_stopped:  %s\n", e->has_stopped  ? "true" : "false");
+    printf("door_is_open: %s\n", e->door_is_open ? "true" : "false");
+    printf("obstruction:  %s\n", e->obstruction  ? "true" : "false");
+    printf("stop_button:  %s\n", e->stop_button  ? "true" : "false");
+
+    // Enkle heltallsfelt.
+    printf("dir:    %d\n", e->dir);
+    printf("floor:  %d\n", e->floor);
+    printf("sensor: %d\n", e->sensor);
+    printf("size:   %d\n", e->size);
+
+    // Array-felter. Bruk løkker for å gå gjennom dem.
+    printf("floor_stops:\n");
+    for (int i = 0; i < 4; i++) {
+        printf("  [%d] = %d\n", i, e->floor_stops[i]);
     }
 
-        
-    printf("%d ", elev->door_is_open);
+    printf("vil_opp:\n");
+    for (int i = 0; i < 4; i++) {
+        printf("  [%d] = %s\n", i, e->vil_opp[i] ? "true" : "false");
+    }
 
+    printf("vil_ned:\n");
+    for (int i = 0; i < 4; i++) {
+        printf("  [%d] = %s\n", i, e->vil_ned[i] ? "true" : "false");
+    }
 }
