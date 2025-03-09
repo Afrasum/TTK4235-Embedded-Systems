@@ -128,6 +128,7 @@ void get_next_dir(Elevator *elev)
             }
 
         }
+        
         for (int i = elev->floor - 1; i >=0; i--)
         {
             if (elev->vil_opp[i] || elev->vil_ned[i] || elev->floor_stops[i])
@@ -172,6 +173,21 @@ void get_next_dir(Elevator *elev)
 void elevator_init(Elevator *elev)
 // Initialiserer heisen til å starte i første etasje og med døren lukket
 {
+    if (elevio_floorSensor()==0){
+  elev->has_stopped = true;
+    elev->dir = 1;
+    elev->door_is_open = false;
+    elevio_doorOpenLamp(false);
+    elev->floor = elevio_floorSensor();
+    elev->sensor = elevio_floorSensor();
+    for (int i = 0; i < 4; i++)
+    {
+        elev->vil_opp[i] = 0;
+        elev->vil_ned[i] = 0;
+        elev->floor_stops[i] = 0;
+    }
+        return;
+    }
     while (elevio_floorSensor() != 0)
     {
 
@@ -248,25 +264,26 @@ void arrival(Elevator *elev){
     int floor = elev->floor;
     int dir = elev->dir;
 
-/*
-if(elev->vil_ned[floor]==1){
 
-        bool continue_up=false;
-        for (int i= floor+1; i<=N_FLOORS-1; i++){
-            if(elev->vil_opp[floor]){
-                continue_up=true;
-                break;
+    if(elev->vil_ned[floor]==1){
+
+            bool continue_up=false;
+            for (int i= floor+1; i<=N_FLOORS-1; i++){
+                if(elev->vil_opp[floor] || elev->vil_ned[floor]){
+                    continue_up=true;
+                    break;
+                }
             }
-        }
-        if(continue_up!=true ){
-                elev->vil_ned[floor]=0;
-                elev->door_is_open=true;
-                elev->has_stopped=true;
-        }
+            if(continue_up == false){
+                    elev->vil_ned[floor]=0;
+                    elev->door_is_open=true;
+                    elev->has_stopped=true;
+            } 
+            //if()
 
-}
+    }
 
-*/
+
 
     if(elev->vil_ned[floor]==1 && dir==0){
 
@@ -276,26 +293,25 @@ if(elev->vil_ned[floor]==1){
 
     }
 
-   /* 
+   
     if(elev->vil_opp[floor]==1){
         
         bool continue_down=false;
         for (int i= floor-1; i>=0; i--){
-            if(elev->vil_ned[floor]){
+            if(elev->vil_opp[floor] || elev->vil_ned[floor]){
                 continue_down=true;
                 break;
             }
         }
-        if(continue_down!=true ){
+        if(continue_down==false){
 
             elev->vil_opp[floor]=0;
             elev->door_is_open=true;
             elev->has_stopped=true;
-
-
-    }
+        } 
+        //if
 }
-*/
+
 
     
     if(elev->vil_opp[floor]==1 && dir==1){
@@ -306,6 +322,7 @@ if(elev->vil_ned[floor]==1){
 
 
     }
+        
 
     //Heispanel
     if(elev->floor_stops[floor]==1){
