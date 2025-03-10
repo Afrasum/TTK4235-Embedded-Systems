@@ -88,8 +88,6 @@ void update_states(Elevator *elev)
 
 
 
-
-
 void get_next_dir(Elevator *elev)
 {
     // Hvis vi er i øverste etasje (4), stopper heisen
@@ -122,14 +120,47 @@ void get_next_dir(Elevator *elev)
             }
         }
     } 
-    else if (elev->dir == 1)
+
+
+   
+    bool found_order = false;
+
+    
+    if (elev->dir == -1) {
+    
+        for (int i = elev->floor + 1; i < 4; i++) {
+            if (elev->vil_opp[i] || elev->vil_ned[i] || elev->floor_stops[i]) {
+                elev->dir = 1;
+                found_order = true;
+                break;
+            }
+        }
+        
+      
+        if (!found_order) {
+            for (int i = elev->floor - 1; i >= 0; i--) {
+                if (elev->vil_opp[i] || elev->vil_ned[i] || elev->floor_stops[i]) {
+                    elev->dir = 0; 
+                    found_order = true;
+                    break;
+                }
+            }
+        }
+
+       
+        if (!found_order) {
+            elev->has_stopped = true;
+            return;
+        }
+    }
+    if (elev->sensor == -1)
     {
         // Sjekker om det er noen som vil opp, ned i etasjer over hvor heisen er eller om det er noen som har trykket på knappene i heisen
-        for (int i = elev->floor + 1; i <= 3; i++)
+        for (int i = elev->floor - 1; i >= 0; i--)
         {
             if (elev->vil_opp[i] || elev->vil_ned[i] || elev->floor_stops[i])
             {
-                elev->dir=1;
+                elev->dir=0;
                 elev->has_stopped = false;
                 
                 return;
@@ -362,8 +393,8 @@ void stop(Elevator *elev){
         elev->floor_stops[i] = 0;
     }
 
-    elevio_motorDirection(DIRN_STOP);
-    
+    elev->dir = -1;
+    elev->has_stopped = true;    
     
     update_states(elev);
 
@@ -375,14 +406,7 @@ void stop(Elevator *elev){
 
     elevio_stopLamp(0);    
     elevio_doorOpenLamp(0);
-
     handle_door(elev);
-
-
-
-   
-
-        elev->has_stopped=true;
 
 
 
