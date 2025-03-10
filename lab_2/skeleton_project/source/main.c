@@ -57,7 +57,6 @@ int main()
             
         }
 
-        printf("3");
         if(p_el->door_is_open==0){
             if(p_el->door_is_open==0 && p_el->has_stopped==true || p_el->dir==1 && p_el->floor==3 || p_el->dir==0 && p_el->floor==0){
                     get_next_dir(p_el);
@@ -67,19 +66,19 @@ int main()
                 }
              
 
-                if(elevio_obstruction()){ 
-                    elevio_stopLamp(1); 
-                } else { 
-                    elevio_stopLamp(0); 
-                } 
                 
-                if(elevio_stopButton()){ 
-                    elevio_motorDirection(DIRN_STOP); 
-                    break; 
-                } 
             }
-
-        printf("4");
+        if(elevio_obstruction()){ 
+                elevio_stopLamp(1); 
+            } else { 
+                elevio_stopLamp(0); 
+            } 
+            
+        if(elevio_stopButton()){ 
+                update_states(p_el);
+                elevio_motorDirection(DIRN_STOP); 
+                
+            } 
         nanosleep(&(struct timespec){0, 20*1000*1000}, NULL); 
     }
 

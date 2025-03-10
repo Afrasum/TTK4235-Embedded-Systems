@@ -3,6 +3,19 @@
 #include "stdio.h"
 
 
+void delete(Elevator *elev){
+
+    elev->has_stopped = true;
+    elev->dir = 1;
+    elev->door_is_open = false;
+    elevio_doorOpenLamp(false);
+    for (int i = 0; i < 4; i++)
+    {
+        elev->vil_opp[i] = 0;
+        elev->vil_ned[i] = 0;
+        elev->floor_stops[i] = 0;
+    }
+}
 void get_states(Elevator *elev)
 {
     fpanel(elev);
@@ -17,6 +30,19 @@ void get_states(Elevator *elev)
     if (elevio_stopButton())
     {
         elev->stop_button = true;
+        elev->has_stopped = true;
+        elev->dir = 1;
+        elev->door_is_open = false;
+        elevio_doorOpenLamp(false);
+        elev->floor = elevio_floorSensor();
+        elev->sensor = elevio_floorSensor();
+        for (int i = 0; i < 4; i++)
+        {
+            elev->vil_opp[i] = 0;
+            elev->vil_ned[i] = 0;
+            elev->floor_stops[i] = 0;
+        }
+
     } else
     {
         elev->stop_button = false;
@@ -75,7 +101,7 @@ void update_states(Elevator *elev)
 
     if (elev->has_stopped)
     {
-        elevio_stopLamp(1);
+        elevio_stopLamp(0);
     } 
 }
 
@@ -96,47 +122,47 @@ void get_next_dir(Elevator *elev)
         {
             if (elev->vil_opp[i] || elev->vil_ned[i] || elev->floor_stops[i])
             {
-                elev->dir = 0;
                 elev->has_stopped = false;
                 break;
             }
         }
+        
     } else if (elev->floor == 0)
     {
+        elev->dir=1;
          
-        for (int i = 0; i <= 3; i++)
+        for (int i = 1; i <= 3; i++)
         {
             // Sjekker om det er noen som vil opp, ned eller om det er noen som har trykket på knappene i heisen
             if (elev->vil_opp[i] || elev->vil_ned[i] || elev->floor_stops[i])
             {
-                elev->dir = 1;
                 elev->has_stopped = false;
-                break;
+                return;
             }
         }
-    } else if (elev->dir == 1)
+    } 
+    else if (elev->dir == 1)
     {
         // Sjekker om det er noen som vil opp, ned i etasjer over hvor heisen er eller om det er noen som har trykket på knappene i heisen
         for (int i = elev->floor + 1; i <= 3; i++)
         {
             if (elev->vil_opp[i] || elev->vil_ned[i] || elev->floor_stops[i])
             {
-                elev->dir = 1;
+                elev->dir=1;
                 elev->has_stopped = false;
                 
-                break;
+                return;
             }
 
         }
-        
+
         for (int i = elev->floor - 1; i >=0; i--)
         {
             if (elev->vil_opp[i] || elev->vil_ned[i] || elev->floor_stops[i])
             {
                 elev->dir = 0;
                 elev->has_stopped = false;
-                
-                break;
+                return;
             }
 
         }
@@ -144,14 +170,16 @@ void get_next_dir(Elevator *elev)
     } else if (elev->dir == 0)
     {
         for (int i = elev->floor - 1; i >= 0; i--)
+        
         {
             if (elev->vil_opp[i] || elev->vil_ned[i] || elev->floor_stops[i])
             {
-                elev->dir = 0;
+                elev->dir=0;
                 elev->has_stopped = false;
-                break;
+                return;
             }
         }
+
         for (int i = elev->floor + 1; i <= 3; i++)
         {
             if (elev->vil_opp[i] || elev->vil_ned[i] || elev->floor_stops[i])
@@ -159,15 +187,11 @@ void get_next_dir(Elevator *elev)
                 elev->dir = 1;
                 elev->has_stopped = false;
                 
-                break;
+                return;
             }
 
         }
-    } else
-    {
-        elev->dir = 0;
-        elev->has_stopped = false;
-    }
+    } 
 }
 
 void elevator_init(Elevator *elev)
@@ -261,44 +285,36 @@ void arrival(Elevator *elev){
     //Sjekker om man har ankommet en etasje som har blitt trykket på, skrur dermed lyset på etasjen, og endrer verdien til 0 i den etasjen. 
     //EtasjePanel
 
-    int floor = elev->floor;
-    int dir = elev->dir;
-
+    
+        int floor = elev->floor;
+        int dir = elev->dir;
+    
 
     if(elev->vil_ned[floor]==1){
 
             bool continue_up=false;
             for (int i= floor+1; i<=N_FLOORS-1; i++){
-                if(elev->vil_opp[floor] || elev->vil_ned[floor]){
+                if(elev->vil_opp[i] || (elev->vil_ned[i] && dir==1) || elev->floor_stops[i]==1){
                     continue_up=true;
                     break;
                 }
             }
             if(continue_up == false){
-                    elev->vil_ned[floor]=0;
                     elev->door_is_open=true;
                     elev->has_stopped=true;
+                    elev->vil_ned[floor]=0;
+                   
+                   
+                        
             } 
-            //if()
 
     }
 
-
-
-    if(elev->vil_ned[floor]==1 && dir==0){
-
-        elev->vil_ned[floor]=0;
-        elev->door_is_open=true;
-        elev->has_stopped=true;
-
-    }
-
-   
     if(elev->vil_opp[floor]==1){
         
         bool continue_down=false;
         for (int i= floor-1; i>=0; i--){
-            if(elev->vil_opp[floor] || elev->vil_ned[floor]){
+            if(elev->vil_opp[i] || (elev->vil_ned[i] && dir==0) || elev->floor_stops[i]==1){
                 continue_down=true;
                 break;
             }
@@ -308,22 +324,9 @@ void arrival(Elevator *elev){
             elev->vil_opp[floor]=0;
             elev->door_is_open=true;
             elev->has_stopped=true;
-        } 
-        //if
+            
+        }
 }
-
-
-    
-    if(elev->vil_opp[floor]==1 && dir==1){
-
-        elev->vil_opp[floor]=0;
-        elev->door_is_open=true;
-        elev->has_stopped=true;
-
-
-    }
-        
-
     //Heispanel
     if(elev->floor_stops[floor]==1){
 
