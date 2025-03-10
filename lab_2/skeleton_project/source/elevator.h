@@ -33,5 +33,6 @@ void elevator_init(Elevator *elev);
 void epanel(Elevator *elev);
 void fpanel(Elevator *elev);
 void arrival(Elevator *elev);
-void delete(Elevator *elev);
+void handle_door(Elevator *elev);
+void stop(Elevator *elev);
 

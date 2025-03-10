@@ -1,21 +1,10 @@
 #include "elevator.h"
 #include "driver/elevio.h"
 #include "stdio.h"
+#include <time.h>
 
 
-void delete(Elevator *elev){
 
-    elev->has_stopped = true;
-    elev->dir = 1;
-    elev->door_is_open = false;
-    elevio_doorOpenLamp(false);
-    for (int i = 0; i < 4; i++)
-    {
-        elev->vil_opp[i] = 0;
-        elev->vil_ned[i] = 0;
-        elev->floor_stops[i] = 0;
-    }
-}
 void get_states(Elevator *elev)
 {
     fpanel(elev);
@@ -29,19 +18,7 @@ void get_states(Elevator *elev)
 
     if (elevio_stopButton())
     {
-        elev->stop_button = true;
-        elev->has_stopped = true;
-        elev->dir = 1;
-        elev->door_is_open = false;
-        elevio_doorOpenLamp(false);
-        elev->floor = elevio_floorSensor();
-        elev->sensor = elevio_floorSensor();
-        for (int i = 0; i < 4; i++)
-        {
-            elev->vil_opp[i] = 0;
-            elev->vil_ned[i] = 0;
-            elev->floor_stops[i] = 0;
-        }
+       elev->stop_button=true;
 
     } else
     {
@@ -51,11 +28,14 @@ void get_states(Elevator *elev)
     if (elevio_obstruction())
     {
         elev->obstruction = true;
+        
     } else
     {
         elev->obstruction = false;
+       
+        }
     }
-}
+
 
 void update_states(Elevator *elev)
 {
@@ -104,6 +84,7 @@ void update_states(Elevator *elev)
         elevio_stopLamp(0);
     } 
 }
+
 
 
 
@@ -340,6 +321,93 @@ void arrival(Elevator *elev){
     //printf("%d ", elev->door_is_open);
 
 }
+
+
+
+void handle_door(Elevator *elev){
+    if(elev->door_is_open==true){
+        
+        time_t start = time(NULL);   
+
+        while(difftime(time(NULL), start) < 3.0){
+            get_states(elev);
+            update_states(elev);
+            
+            if (elevio_obstruction()) {
+                start=time(NULL);
+            }
+
+        }
+        
+       elev->door_is_open=false;
+        
+        
+    }
+}
+void stop(Elevator *elev){
+    elevio_motorDirection(DIRN_STOP); 
+    elevio_stopLamp(1);
+
+
+    if (elevio_floorSensor()!=-1){
+        elev->door_is_open=true;
+        elevio_doorOpenLamp(1);
+
+    }
+    
+    for (int i = 0; i < 4; i++)
+    {
+        elev->vil_opp[i] = 0;
+        elev->vil_ned[i] = 0;
+        elev->floor_stops[i] = 0;
+    }
+
+    elevio_motorDirection(DIRN_STOP);
+    
+    
+    update_states(elev);
+
+
+    while (elevio_stopButton()){
+        elevio_motorDirection(DIRN_STOP); 
+
+        }
+
+    elevio_stopLamp(0);    
+    elevio_doorOpenLamp(0);
+
+    handle_door(elev);
+
+
+
+   
+
+        elev->has_stopped=true;
+
+
+
+        
+    while (1) {
+        get_states(elev);
+        epanel(elev);
+        fpanel(elev);
+
+     
+        for (int i = 0; i < 4; i++) {
+            if (elev->vil_opp[i] || elev->vil_ned[i] || elev->floor_stops[i]) {
+                elev->has_stopped = false;
+                get_next_dir(elev);
+                update_states(elev);
+
+                return;
+            }
+        }
+
+        elevio_motorDirection(DIRN_STOP); 
+
+    }
+}
+
 
 
 void printElevator(Elevator *e) {

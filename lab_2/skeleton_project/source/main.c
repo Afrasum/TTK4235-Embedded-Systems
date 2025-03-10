@@ -40,47 +40,47 @@ int main()
 
         }
        
-        if(p_el->door_is_open==true){
-            time_t start = time(NULL);   
+       handle_door(p_el);
 
-            while(difftime(time(NULL), start) < 3.0){
-                get_states(p_el);
-                update_states(p_el);
-
-            }
-            if(p_el->obstruction!=true){
-                p_el->door_is_open=false;
-                update_states(p_el);
-
-            }
-            
-            
+       if (elevio_obstruction()) { 
+        if (p_el->door_is_open) {
+            elevio_motorDirection(DIRN_STOP);
+            elevio_doorOpenLamp(1);
+        }
+    } else {
+            handle_door(p_el);
         }
 
-        if(p_el->door_is_open==0){
-            if(p_el->door_is_open==0 && p_el->has_stopped==true || p_el->dir==1 && p_el->floor==3 || p_el->dir==0 && p_el->floor==0){
+
+        get_states(p_el);
+        handle_door(p_el);
+    
+        if (!p_el->door_is_open && p_el->has_stopped) {
+            for (int i = 0; i < 4; i++) {
+                if (p_el->vil_opp[i] || p_el->vil_ned[i] || p_el->floor_stops[i]) {
                     get_next_dir(p_el);
-
-                    
-                    
+                    update_states(p_el);
+                    break;
                 }
-             
+            }
+        }
+    
+    
+       
+           
+        if (elevio_stopButton()){ 
+            stop(p_el);
+            update_states(p_el);
+               
 
                 
-            }
-        if(elevio_obstruction()){ 
-                elevio_stopLamp(1); 
-            } else { 
-                elevio_stopLamp(0); 
-            } 
-            
-        if(elevio_stopButton()){ 
-                update_states(p_el);
-                elevio_motorDirection(DIRN_STOP); 
                 
-            } 
+
+            
         nanosleep(&(struct timespec){0, 20*1000*1000}, NULL); 
     }
 
+
+    }
     return 0;
 }
