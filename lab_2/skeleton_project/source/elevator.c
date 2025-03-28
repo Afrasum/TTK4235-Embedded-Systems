@@ -408,27 +408,29 @@ void stop(Elevator *elev){
     elevio_doorOpenLamp(0);
     handle_door(elev);
 
-
-
-        
+    elev->has_stopped=true;
+    
+    
     while (1) {
         get_states(elev);
         epanel(elev);
         fpanel(elev);
 
      
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i <= 3; i++) {
             if (elev->vil_opp[i] || elev->vil_ned[i] || elev->floor_stops[i]) {
-                elev->has_stopped = false;
-                get_next_dir(elev);
-                update_states(elev);
-
+                if (elev->sensor==-1) {
+                    if (i == elev->floor) {
+                        elev->dir  = !(elev->dir);
+                        update_states(elev);
+                        return;
+                    }                    
+                    return;
+                }
                 return;
             }
         }
-
         elevio_motorDirection(DIRN_STOP); 
-
     }
 }
 

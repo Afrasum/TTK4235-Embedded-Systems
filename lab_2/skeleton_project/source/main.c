@@ -47,7 +47,7 @@ int main()
             elevio_motorDirection(DIRN_STOP);
             elevio_doorOpenLamp(1);
         }
-    } else {
+        } else {
             handle_door(p_el);
         }
 
