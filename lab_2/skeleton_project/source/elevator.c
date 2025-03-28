@@ -391,7 +391,7 @@ void stop(Elevator *elev){
             if (elev->vil_opp[i] || elev->vil_ned[i] || elev->floor_stops[i]) {
                 if (elev->sensor==-1) {
                     if (i == elev->floor) {
-                        elev->dir  = ~(elev->dir);
+                        elev->dir  = !(elev->dir);
                         update_states(elev);
                         return;
                     }                    
