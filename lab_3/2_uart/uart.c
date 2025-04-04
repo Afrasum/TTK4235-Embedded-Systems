@@ -49,8 +49,9 @@ typedef struct {
 void uart_pins_init(){ 
 
     GPIO->DIRSET = (1 << 6);
-    GPIO->DIRSET = (1 << 8);
-
+    GPIO->DIRCLR = (1 << 8);
+    GPIO->DIRCLR = (1 << 7);
+    GPIO->DIRSET = (1 << 5);
 
     UART->PSELTXD = (0 << 6);
     UART->PSELRXD = (0 << 8);
