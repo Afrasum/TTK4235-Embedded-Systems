@@ -50,17 +50,16 @@ void uart_pins_init(){
 
     GPIO->DIRSET = (1 << 6);
     GPIO->DIRCLR = (1 << 8);
-    GPIO->DIRCLR = (1 << 7);
-    GPIO->DIRSET = (1 << 5);
+    /* GPIO->DIRCLR = (1 << 7); */
+    /* GPIO->DIRSET = (1 << 5); */
 
     UART->PSELTXD = (0 << 6);
     UART->PSELRXD = (0 << 8);
 
-
     UART->BAUDRATE = 0x00275000;
 
-    UART->PSELRTS = (0 << 6);
-    UART->PSELCTS = (0 << 8);
+    UART->PSELRTS = 0xFFFFFFFF;
+    UART->PSELCTS = 0xFFFFFFFF;
 
     UART->ENABLE = 4;
 
