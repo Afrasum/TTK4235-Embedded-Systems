@@ -69,14 +69,17 @@ void uart_pins_init(){
 
 void uart_send(char letter){
 
- //Venter til den blir 1
-    while(UART->EVENTS_TXDRDY==0){
-      nop(); 
+    UART->TASKS_STARTTX = 1; //Starter TX
 
+    UART->TXD = letter;
+ //Venter til den blir 1
+    while(!UART->EVENTS_TXDRDY){
+        __NOP();
     }
     
-    UART->TXD = letter;
     UART->EVENTS_TXDRDY = 0; 
+    UART->TASKS_STOPTX = 1; //Stopper TX
+
 
 }
 
