@@ -71,15 +71,12 @@ void uart_send(char letter){
 
  //Venter til den blir 1
     while(UART->EVENTS_TXDRDY==0){
-       
+      nop(); 
 
     }
- //Setter lik 0
-  UART->EVENTS_TXDRDY = 0; 
-
-//Sender bokstaven
-  UART->TXD = letter;
     
+    UART->TXD = letter;
+    UART->EVENTS_TXDRDY = 0; 
 
 }
 
