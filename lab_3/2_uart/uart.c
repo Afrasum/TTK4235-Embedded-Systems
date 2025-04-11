@@ -53,8 +53,8 @@ void uart_pins_init(){
     /* GPIO->DIRCLR = (1 << 7); */
     /* GPIO->DIRSET = (1 << 5); */
 
-    UART->PSELTXD = (0 << 6);
-    UART->PSELRXD = (0 << 8);
+    UART->PSELTXD = 6;
+    UART->PSELRXD = 8;
 
     UART->BAUDRATE = 0x00275000;
 
@@ -80,28 +80,16 @@ void uart_send(char letter){
     UART->EVENTS_TXDRDY = 0; 
     UART->TASKS_STOPTX = 1; //Stopper TX
 
-
 }
 
 char uart_read(){
 
-//Venter til den blir 1
-if(UART->EVENTS_RXDRDY==1){
+    if(UART->EVENTS_RXDRDY==1){
+        UART->EVENTS_RXDRDY = 0; 
+        return (char)UART->RXD;
+    }
 
-
-    
- //Setter lik 0
-  UART->EVENTS_RXDRDY = 0; 
-
-//leser
-   return (char) UART->RXD;
-
-}
-
-else {
-
-    return "\0";
-}
+    return '\0';
 
 }
 
@@ -109,7 +97,6 @@ else {
 
 
 
-    
 
 
 
@@ -122,8 +109,6 @@ else {
 
 
 
-
-}
 
 
 
