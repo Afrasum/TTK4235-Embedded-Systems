@@ -16,20 +16,18 @@ void delay_ms(volatile unsigned int ms) {
     }
 }
 
+void leds_init(void) {
+    // Sett pinnene 17, 18, 19 og 20 til utgang
+    for (int i = 17; i <= 20; i++) {
+        GPIO->DIRSET |= (1 << i);
+    }
+}
+
 
 int main(void) {
     uart_init();
     button_init();
-    
-    // Sett opp LED pins som output
-    for(int i = 17; i <= 20; i++) {
-        GPIO->DIRSET = (1 << i);
-    }
-    
-    // Slår av LED-lysene (aktiv lav, så sett høy for å slå av)
-    for(int i = 17; i <= 20; i++) {
-        GPIO->OUTSET = (1 << i);
-    }
+    leds_init();
     
     int leds_on = 0; // Hold track of LED state
     char letter;
@@ -48,6 +46,7 @@ int main(void) {
         
         // Sjekk for mottatte data
         letter = uart_read();
+        uart_send(letter); // Send tilbake det mottatte tegnet
         if (letter != '\0') {
             // Toggle LED state on any received character
             if (leds_on) {
@@ -64,10 +63,14 @@ int main(void) {
                 leds_on = 1;
             }
         }
-        
-        delay_ms(10); // Kort delay for å unngå å overbelaste CPU
-    }
 
+        if (letter == 'q') {
+            // Avslutt programmet hvis 'q' er mottatt
+            break;
+        }
+
+    }
+        
     return 0;
 }
 
