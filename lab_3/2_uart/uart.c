@@ -1,6 +1,8 @@
-#include <uarh.h>
-#include <gpio.h>
+#include "uart.h"
+#include "gpio.h"
 #include <stdint.h>
+
+#define __NOP() __asm__ volatile("nop")
 
 
 
@@ -9,7 +11,7 @@
 typedef struct {
     volatile uint32_t TASKS_STARTRX;
     volatile uint32_t TASKS_STOPRX;
-    volatile uint32_t TASKS_STARTTRX;
+    volatile uint32_t TASKS_STARTTX;
     volatile uint32_t TASKS_STOPTX;
     volatile uint32_t RESERVED0[3];
     volatile uint32_t TASKS_SUSPEND;
@@ -46,7 +48,7 @@ typedef struct {
 }NRF_UART_REG;
 
 
-void uart_pins_init(){ 
+void uart_init(){ 
 
     GPIO->DIRSET = (1 << 6);
     GPIO->DIRCLR = (1 << 8);
@@ -69,10 +71,11 @@ void uart_pins_init(){
 
 void uart_send(char letter){
 
+    UART->EVENTS_TXDRDY = 0; // Reset event flag først
     UART->TASKS_STARTTX = 1; //Starter TX
 
     UART->TXD = letter;
- //Venter til den blir 1
+    //Venter til den blir 1
     while(!UART->EVENTS_TXDRDY){
         __NOP();
     }

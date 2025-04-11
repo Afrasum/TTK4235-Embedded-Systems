@@ -1,35 +1,37 @@
 FAMILY := nrf52
-SOURCES := main.c # Fill inn missing sources
+SOURCES := main.c uart.c buttons.c # Din hovedfil med uart, buttons, osv.
+SOURCES += .build_system/system_nrf52.c
+SOURCES += .build_system/gcc_startup_nrf52.S
 
 BUILD_DIR := build
 BUILD_SYS := .build_system
 LINKER_SCRIPT := $(BUILD_SYS)/linker_script_nrf52.ld
 
-GNU_PREFIX	:= arm-none-eabi
-CC			:= $(GNU_PREFIX)-gcc
-OBJCOPY		:= $(GNU_PREFIX)-objcopy
-OBJDUMP		:= $(GNU_PREFIX)-objdump
+GNU_PREFIX    := arm-none-eabi
+CC            := $(GNU_PREFIX)-gcc
+OBJCOPY       := $(GNU_PREFIX)-objcopy
+OBJDUMP       := $(GNU_PREFIX)-objdump
 
 QUIET := @
 
+## Inkluder den katalogen der du har dine header-filer
+CFLAGS += -I.
+CFLAGS += -I$(BUILD_SYS)
+
 ## Compiler flags
-# CPU specific
+# CPU spesifikt
 CFLAGS += -mcpu=cortex-m4 -mthumb -mabi=aapcs -mfloat-abi=soft
-# Get linker optimization for free
+# Linker optimalisering
 CFLAGS += -ffunction-sections -fdata-sections --short-enums
 CFLAGS += -fno-strict-aliasing -fno-builtin
-# Throw errors for warnings and set GNU dialect to ISO C99
+# Advarsler og ISO C99-dialekt
 CFLAGS += -Wall -Werror -std=gnu99
-# CFLAGS += -ggdb -Og / -O0 / -O3 etc
-# Chip specific
+# Chip spesifikt
 CFLAGS += -DNRF52832_XXAA
 
 ## Linker flags
 CFLAGS += --specs=nosys.specs -Wl,--gc-sections -T $(LINKER_SCRIPT)
-# or --specs=nano.specs -lc -lnosys
-
-SOURCES += $(BUILD_SYS)/system_nrf52.c
-SOURCES += $(BUILD_SYS)/gcc_startup_nrf52.S
+# alternativt: --specs=nano.specs -lc -lnosys
 
 .PHONY: default flash debug erase recover clean
 
@@ -59,4 +61,4 @@ recover: $(BUILD_DIR)
 	nrfjprog --recover
 
 $(BUILD_DIR):
-	$(QUIET)mkdir -p $(BUILD_DIR)
+	$(QUIET) mkdir -p $(BUILD_DIR)
