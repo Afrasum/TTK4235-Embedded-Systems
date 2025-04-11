@@ -1,0 +1,30 @@
+\doxysection{system.\+h}
+\hypertarget{system_8h_source}{}\label{system_8h_source}\index{source/system.h@{source/system.h}}
+\mbox{\hyperlink{system_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ SYSTEM\_H}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ SYSTEM\_H}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00010\ \textcolor{comment}{\ *\ @brief\ Enum\ of\ tuning\ rules}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00012\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{enum}\ \{}
+\DoxyCodeLine{00013\ \ \ \ \ Classic\_Ziegler\_Nichols,\ \textcolor{comment}{/*<\ Ziegler\ Nichols\ */}}
+\DoxyCodeLine{00014\ \ \ \ \ Pessen\_Integral\_Rule\ \textcolor{comment}{/*<\ Pessen\ */}}
+\DoxyCodeLine{00015\ \}\ Tuning;}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00020\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00021\ \ \ \ \ \textcolor{keywordtype}{double}\ Ku;\ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00022\ \ \ \ \ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{struct_system_a35042acb20cc2f329be781063d1b7f18}{Tu}};\ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00023\ \ \ \ \ Tuning\ \mbox{\hyperlink{struct_system_a8d3ab4a5d0de7a97ec93dccb1d576b23}{tuning\_method}};\ }
+\DoxyCodeLine{00024\ \}\ \mbox{\hyperlink{struct_system}{System}};}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00035\ \mbox{\hyperlink{struct_system}{System}}\ *\ \mbox{\hyperlink{system_8h_a9498fc506100b388a8cca347628c2ade}{system\_create}}(\textcolor{keywordtype}{double}\ Ku,\ \textcolor{keywordtype}{double}\ Tu,\ Tuning\ tuning\_method);}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00042\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{system_8h_adab9a110141ccce185af981adbc62515}{system\_delete}}(\mbox{\hyperlink{struct_system}{System}}\ *\ system\_current);}
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00044\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

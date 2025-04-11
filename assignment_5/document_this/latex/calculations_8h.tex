@@ -1,0 +1,79 @@
+\doxysection{source/calculations.h File Reference}
+\hypertarget{calculations_8h}{}\label{calculations_8h}\index{source/calculations.h@{source/calculations.h}}
+
+
+Funksjoner for å beregne PID-\/parametre.  
+
+
+{\ttfamily \#include "{}system.\+h"{}}\newline
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+double \mbox{\hyperlink{calculations_8h_a65260419923f28d94cb9893c780a5af3}{calculate\+\_\+\+P\+\_\+parameter}} (\mbox{\hyperlink{struct_system}{System}} \texorpdfstring{$\ast$}{*}current\+\_\+system)
+\begin{DoxyCompactList}\small\item\em Beregner P-\/parameteren for PID. \end{DoxyCompactList}\item 
+double \mbox{\hyperlink{calculations_8h_ad587231ab5fd7e00c09645eac6cffd60}{calculate\+\_\+\+I\+\_\+parameter}} (\mbox{\hyperlink{struct_system}{System}} \texorpdfstring{$\ast$}{*}current\+\_\+system)
+\begin{DoxyCompactList}\small\item\em Beregner I-\/parameteren for PID. \end{DoxyCompactList}\item 
+double \mbox{\hyperlink{calculations_8h_a8f20770a71d65ff426630b2e09496a4c}{calculate\+\_\+\+D\+\_\+parameter}} (\mbox{\hyperlink{struct_system}{System}} \texorpdfstring{$\ast$}{*}current\+\_\+system)
+\begin{DoxyCompactList}\small\item\em Beregner D-\/parameteren for PID. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Funksjoner for å beregne PID-\/parametre. 
+
+
+
+\doxysubsection{Function Documentation}
+\Hypertarget{calculations_8h_a8f20770a71d65ff426630b2e09496a4c}\index{calculations.h@{calculations.h}!calculate\_D\_parameter@{calculate\_D\_parameter}}
+\index{calculate\_D\_parameter@{calculate\_D\_parameter}!calculations.h@{calculations.h}}
+\doxysubsubsection{\texorpdfstring{calculate\_D\_parameter()}{calculate\_D\_parameter()}}
+{\footnotesize\ttfamily \label{calculations_8h_a8f20770a71d65ff426630b2e09496a4c} 
+double calculate\+\_\+\+D\+\_\+parameter (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_system}{System}} \texorpdfstring{$\ast$}{*}}]{current\+\_\+system}{}\end{DoxyParamCaption})}
+
+
+
+Beregner D-\/parameteren for PID. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em current\+\_\+system} & En peker til systemstrukturen som inneholder Ku og Tu \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+D-\/parameteren 
+\end{DoxyReturn}
+\Hypertarget{calculations_8h_ad587231ab5fd7e00c09645eac6cffd60}\index{calculations.h@{calculations.h}!calculate\_I\_parameter@{calculate\_I\_parameter}}
+\index{calculate\_I\_parameter@{calculate\_I\_parameter}!calculations.h@{calculations.h}}
+\doxysubsubsection{\texorpdfstring{calculate\_I\_parameter()}{calculate\_I\_parameter()}}
+{\footnotesize\ttfamily \label{calculations_8h_ad587231ab5fd7e00c09645eac6cffd60} 
+double calculate\+\_\+\+I\+\_\+parameter (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_system}{System}} \texorpdfstring{$\ast$}{*}}]{current\+\_\+system}{}\end{DoxyParamCaption})}
+
+
+
+Beregner I-\/parameteren for PID. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em current\+\_\+system} & En peker til systemstrukturen som inneholder Ku og Tu \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+I-\/parameteren 
+\end{DoxyReturn}
+\Hypertarget{calculations_8h_a65260419923f28d94cb9893c780a5af3}\index{calculations.h@{calculations.h}!calculate\_P\_parameter@{calculate\_P\_parameter}}
+\index{calculate\_P\_parameter@{calculate\_P\_parameter}!calculations.h@{calculations.h}}
+\doxysubsubsection{\texorpdfstring{calculate\_P\_parameter()}{calculate\_P\_parameter()}}
+{\footnotesize\ttfamily \label{calculations_8h_a65260419923f28d94cb9893c780a5af3} 
+double calculate\+\_\+\+P\+\_\+parameter (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_system}{System}} \texorpdfstring{$\ast$}{*}}]{current\+\_\+system}{}\end{DoxyParamCaption})}
+
+
+
+Beregner P-\/parameteren for PID. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em current\+\_\+system} & En peker til systemstrukturen som inneholder Ku og Tu \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+P-\/parameteren 
+\end{DoxyReturn}
