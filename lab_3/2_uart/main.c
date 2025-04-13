@@ -1,3 +1,7 @@
+
+#include <stdio.h>
+#include <sys/types.h> // For ssize_t
+
 #include <stdint.h>
 #include "uart.h"
 #include "buttons.h"
@@ -21,6 +25,35 @@ void leds_init(void) {
     for (int i = 17; i <= 20; i++) {
         GPIO->DIRSET |= (1 << i);
     }
+}
+
+
+ssize_t _read(int fd, void *buf, size_t count) {
+    char *str = (char *)(buf);
+    char letter;
+
+    // Vent til vi mottar et gyldig tegn
+    do {
+        letter = uart_read();
+    } while (letter == '\0');
+
+    // Lagre tegnet i bufferen
+    *str = letter;
+
+    // Returner antall tegn lest (1)
+    return 1;
+}
+
+
+// Globale implementasjon av _write som brukes av iprintf
+ssize_t _write(int fd, const void *buf, size_t count) {
+    char *letter = (char *)buf;
+    for (int i = 0; i < count; i++) {
+        uart_send(*letter);
+        letter++;
+    }
+    // Returner antall tegn skrevet
+    return count;
 }
 
 
@@ -70,6 +103,8 @@ int main(void) {
         }
 
     }
+
+    iprintf("The average grade in TTK%d in %d was: %c\n\r", 4235, 2022, 'B');
         
     return 0;
 }
